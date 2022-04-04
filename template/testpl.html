@@ -4,7 +4,10 @@
 <body>
 
 <h1>Stations</h1>
-<p>{{.data}}</p>
+{{range $d := .data}}
+<p>{{.d}}</p>
+{{end}}
+
 
 </body>
 </html> 
