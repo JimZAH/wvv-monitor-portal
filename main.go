@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"text/template"
 
 	"github.com/go-redis/redis/v8"
@@ -19,6 +20,7 @@ var rd = redis.NewClient(&redis.Options{
 })
 
 type D struct {
+	Time []int64
 	Data []string
 }
 
@@ -47,7 +49,11 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
+		time, _ := strconv.ParseInt(keys[i], 10, 64)
+
 		data.Data = append(data.Data, val)
+
+		data.Time = append(data.Time, time)
 
 	}
 

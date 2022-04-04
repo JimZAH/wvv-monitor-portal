@@ -4,15 +4,15 @@
 <head>
 <style>
 body {
-	background-color: black;
+	background-color: rgb(16, 15, 15);
 }
 
 h1 {
-	color: green;
+	color: rgb(50, 73, 228);
 }
 
 p {
-	color: lightgreen;
+	color: rgb(19, 206, 19);
 }
 </style>
 </head>
@@ -21,7 +21,7 @@ p {
 
 <h1>Stations</h1>
 {{ range .Data }}
-<p>{{.}}</p>
+<p>{{ .Time }} {{.}}</p>
 {{end}}
 </body>
 </html> 
