@@ -18,13 +18,13 @@ var rd = redis.NewClient(&redis.Options{
 	DB:       0,
 })
 
-type d struct {
-	data []string
+type D struct {
+	Data []string
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
 
-	var data d
+	var data D
 	// The method must be get otherwise dump
 	if r.Method != "GET" {
 		w.WriteHeader(401)
@@ -47,7 +47,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
-		data.data = append(data.data, val)
+		data.Data = append(data.Data, val)
 
 	}
 
