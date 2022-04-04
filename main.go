@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
+	"net/http"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -15,7 +17,17 @@ var rd = redis.NewClient(&redis.Options{
 	DB:       0,
 })
 
-func main() {
+func xlx(w http.ResponseWriter, r *http.Request) {
+
+	// The method must be get otherwise dump
+	if r.Method != "GET" {
+		w.WriteHeader(401)
+		w.Write([]byte("Sorry, that method is not supported"))
+		return
+	}
+
+	w.WriteHeader(200)
+
 	var data []string
 
 	keys, err := rd.Keys(ctx, "*").Result()
@@ -36,7 +48,14 @@ func main() {
 	}
 
 	for i := 0; i < len(data); i++ {
-		fmt.Println(data[i])
+		w.Write([]byte(data[i]))
 	}
+
+}
+
+func main() {
+
+	http.HandleFunc("/xlx", xlx)
+	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
