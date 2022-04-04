@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html>
 <title>MX0WVV XLX Lookup</title>
+<head>
+<style>
+body {
+	background-color: black;
+}
+
+h1 {
+	color: green;
+}
+
+p {
+	color: lightgreen;
+}
+</style>
+</head>
+
 <body>
 
 <h1>Stations</h1>
-{{range $d := .data}}
-<p>{{.d}}</p>
+{{ range .Data }}
+<p>{{.}}</p>
 {{end}}
-
-
 </body>
 </html> 
