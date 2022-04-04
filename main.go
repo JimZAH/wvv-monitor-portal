@@ -16,12 +16,27 @@ var rd = redis.NewClient(&redis.Options{
 })
 
 func main() {
-	data, err := rd.Keys(ctx, "*").Result()
+	var data []string
+
+	keys, err := rd.Keys(ctx, "*").Result()
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Println(data)
+	for i := 0; i < len(keys); i++ {
+		val, err := rd.Get(ctx, keys[i]).Result()
+
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		data = append(data, val)
+
+	}
+
+	for i := 0; i < len(data); i++ {
+		fmt.Println(data[i])
+	}
 
 }
