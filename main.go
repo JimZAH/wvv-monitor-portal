@@ -51,6 +51,8 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 	}
 
+	fmt.Println(data)
+
 	t, _ := template.ParseFiles("template/testpl.html")
 	t.Execute(w, data)
 
