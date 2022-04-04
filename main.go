@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
+	"text/template"
 
 	"github.com/go-redis/redis/v8"
 )
@@ -18,14 +18,13 @@ var rd = redis.NewClient(&redis.Options{
 	DB:       0,
 })
 
-func testpl(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(200)
-	t, _ := template.ParseFiles("template/testpl.html")
-	t.Execute(w, nil)
+type d struct {
+	data []string
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
 
+	var data d
 	// The method must be get otherwise dump
 	if r.Method != "GET" {
 		w.WriteHeader(401)
@@ -34,8 +33,6 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(200)
-
-	var data []string
 
 	keys, err := rd.Keys(ctx, "*").Result()
 
@@ -50,20 +47,18 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
-		data = append(data, val)
+		data.data = append(data.data, val)
 
 	}
 
-	for i := 0; i < len(data); i++ {
-		w.Write([]byte(data[i] + "\n-----------------------------------------------------------------------\n"))
-	}
+	t, _ := template.ParseFiles("template/testpl.html")
+	t.Execute(w, data)
 
 }
 
 func main() {
 
 	http.HandleFunc("/xlx", xlx)
-	http.HandleFunc("/test", testpl)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
