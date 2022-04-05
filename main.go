@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"text/template"
 
@@ -37,6 +38,8 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 
 	keys, err := rd.Keys(ctx, "*").Result()
+
+	sort.Strings(keys)
 
 	if err != nil {
 		fmt.Println(err)
