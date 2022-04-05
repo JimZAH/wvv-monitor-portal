@@ -39,7 +39,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 	keys, err := rd.Keys(ctx, "*").Result()
 
-	sort.Strings(keys)
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 
 	if err != nil {
 		fmt.Println(err)
