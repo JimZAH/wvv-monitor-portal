@@ -60,7 +60,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 		data.Time = append(data.Time, time)
 
-		if i == limit {
+		if i == limit-1 {
 			break
 		}
 
