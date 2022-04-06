@@ -14,6 +14,8 @@ import (
 
 var ctx = context.Background()
 
+const limit = 20
+
 var rd = redis.NewClient(&redis.Options{
 	Addr:     "localhost:6379",
 	Password: "",
@@ -57,6 +59,10 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 		data.Data = append(data.Data, val)
 
 		data.Time = append(data.Time, time)
+
+		if i == limit {
+			break
+		}
 
 	}
 
