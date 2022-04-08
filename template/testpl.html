@@ -31,12 +31,23 @@ header {
 }
 
 .menu-button:hover {
-	background-color: rgb(19, 206, 19);;
+	background-color: rgb(19, 206, 19);
 	color: rgb(50, 73, 228);
 }
 
 .menu {
 
+}
+
+input[type=text] {
+	background-color: rgb(16, 15, 15);
+	border: dotted;
+	color: rgb(19, 206, 19);
+	margin-top: 5px;
+	margin-left: 5px;
+	float: right;
+	font-family: "Source Code Pro", "Lucida Console", "Courier New", monospace;
+	height: 20px;
 }
 
 h1 {
@@ -123,6 +134,7 @@ li {
 	{{ else }}
 		<a href="https://mx0wvv.org/monitor" class="menu-button">Limited History</a>
 	{{ end }}
+	<input type="text" id="search" name="search">
 </section>
 </body>
 </html> 
