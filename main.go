@@ -75,7 +75,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	http.HandleFunc("/xlx", xlx)
+	go http.HandleFunc("/xlx", xlx)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
