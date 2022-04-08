@@ -2,51 +2,99 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>MX0WVV XLX Lookup</title>
+	<title>MX0WVV System Monitor</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<meta http-equiv="refresh" content="30; URL=https://mx0wvv.org/monitor">
 <style>
 body {
 	background-color: rgb(16, 15, 15);
+	color: rgb(19, 206, 19);
+	font-family: "Source Code Pro", "Lucida Console", "Courier New", monospace;
+	font-size: 16px;
+	line-height: 1.5;
+}
+
+header {
+	text-align: center;
 }
 
 h1 {
 	color: rgb(50, 73, 228);
-	font-family: "Lucida Console", "Courier New", monospace;
+	margin:  0 0.25em;
 }
 
-p {
-	color: rgb(19, 206, 19);
-	font-family: "Lucida Console", "Courier New", monospace;
+section {
+	margin-top: 1.5em;
+}
+
+li {
+	margin: 0 0 0.25em;
+	padding: 0;
 }
 
 .stations {
-	border-style: dotted;
-	border-color: rgb(50, 73, 228);
 	/* Need to set a height of some kind */
 	max-height: 500px;
 	/* Enable scrolling to see entries hidden from view */
 	overflow-y: scroll;
+	margin: 0 0.25em 0.25em;
+	padding: 0;
+	list-style: none;
+}
+/* Hide an element to all devices except screen readers */
+.sr-only {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0,0,0,0);
+	border: 0;
+}
+
+.dotted-border {
+	border-style: dotted;
+	border-color: rgb(50, 73, 228);
+}
+
+.cool-text {
+	margin: 0 0 0.5em;
+	color: rgb(50, 73, 228);
+	font-size: 16px;
+}
+/* Screen sizes >= iPad portrait have a bit more space available */
+@media (min-width: 768px) {
+	h1 {
+		margin: 0.5em 0;
+	}
+	.cool-text {
+		font-size: 32px;
+	}	
 }
 
 </style>
 </head>
 
 <body>
+<header class="dotted-border">
+	<h1>MX0WVV System Monitor</h1>
+</header>
 
-<h1>
-<pre>
-   ______       __  _
+<section class="dotted-border">
+	<h2 class="sr-only">Stations</h2>
+<!-- As PREs are pre-formatted, they must be aligned hard left -->
+<pre class="cool-text" aria-hidden="true">   ______       __  _
   / __/ /____ _/ /_(_)__  ___  ___
  _\ \/ __/ _ `/ __/ / _ \/ _ \(_-<
 /___/\__/\_,_/\__/_/\___/_//_/___/
 </pre>
+	<ul class="stations">
+		{{ range .Data }}
+		<li>{{ . }}</li>
+		{{end}}
+	</ul>	
+</section>
 
-</h1>
-<div class="stations">
-{{ range .Data }}
-<p>{{ . }}</p>
-{{end}}
-</div>
 </body>
 </html> 
