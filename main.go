@@ -12,9 +12,10 @@ import (
 	"github.com/go-redis/redis/v8"
 )
 
-var ctx = context.Background()
-
-const limit = 20
+var (
+	ctx   = context.Background()
+	limit = 50
+)
 
 var rd = redis.NewClient(&redis.Options{
 	Addr:     "localhost:6379",
@@ -23,18 +24,27 @@ var rd = redis.NewClient(&redis.Options{
 })
 
 type D struct {
-	Time []int64
-	Data []string
+	Time   []int64
+	Data   []string
+	Reload bool
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
 
 	var data D
+	data.Reload = true
+
 	// The method must be get otherwise dump
 	if r.Method != "GET" {
 		w.WriteHeader(401)
 		w.Write([]byte("Sorry, that method is not supported"))
 		return
+	}
+
+	span := r.URL.Query().Get("xlx_span")
+
+	if span != "" {
+		data.Reload = false
 	}
 
 	w.WriteHeader(200)
@@ -60,7 +70,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 		data.Time = append(data.Time, time)
 
-		if i == limit-1 {
+		if i == limit-1 && span != "full" {
 			break
 		}
 

@@ -4,7 +4,10 @@
 	<meta charset="utf-8">
 	<title>MX0WVV System Monitor</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<!--if span is set disable page auto refresh -->
+	{{if .Reload}}
 	<meta http-equiv="refresh" content="30; URL=https://mx0wvv.org/monitor">
+	{{end}}
 <style>
 body {
 	background-color: rgb(16, 15, 15);
@@ -16,6 +19,24 @@ body {
 
 header {
 	text-align: center;
+}
+
+.menu-button {
+	border: dotted;
+	float: left;
+	margin-top: 5px;
+	margin-left: 5px;
+	text-decoration: none;
+	color: rgb(19, 206, 19);
+}
+
+.menu-button:hover {
+	background-color: rgb(19, 206, 19);;
+	color: rgb(50, 73, 228);
+}
+
+.menu {
+
 }
 
 h1 {
@@ -96,5 +117,12 @@ li {
 	</ul>	
 </section>
 
+<section class="menu">
+	{{ if .Reload }}
+		<a href="?xlx_span=full" class="menu-button">Full History</a>
+	{{ else }}
+		<a href="https://mx0wvv.org/monitor" class="menu-button">Limited History</a>
+	{{ end }}
+</section>
 </body>
 </html> 
