@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sort"
 	"strconv"
+	"strings"
 	"text/template"
 
 	"github.com/go-redis/redis/v8"
@@ -62,6 +63,12 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 		if err != nil {
 			fmt.Println(err)
+		}
+
+		// Remove when migration is complete. If the data is raw skip!
+		raw := strings.Split(keys[i], "-")
+		if raw[0] == "raw" {
+			continue
 		}
 
 		time, _ := strconv.ParseInt(keys[i], 10, 64)
