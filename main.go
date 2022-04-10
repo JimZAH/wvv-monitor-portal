@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -28,6 +29,37 @@ type D struct {
 	Time   []int64
 	Data   []string
 	Reload bool
+}
+
+type Data struct {
+	Key     string   `json:"Key"`
+	Node    Nodes    `json:"Node"`
+	Station Stations `json:"Station"`
+}
+
+type Nodes struct {
+	N []Node `json:"Nodes"`
+}
+
+type Stations struct {
+	S []Station `json:"Stations"`
+}
+
+type Node struct {
+	Callsign      string `json:"Callsign"`
+	IP            string `json:"IP"`
+	LinkedModule  string `json:"LinkedModule"`
+	Protocol      string `json:"Protocol"`
+	ConnectTime   string `json:"ConnectTime"`
+	LastHeardTime string `json:"LastHeardTime"`
+}
+
+type Station struct {
+	Callsign      string `json:"Callsign"`
+	Vianode       string `json:"Via-node"`
+	Onmodule      string `json:"On-module"`
+	Viapeer       string `json:"Via-peer"`
+	LastHeardTime string `json:"LastHeardTime"`
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
@@ -90,9 +122,36 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func xlxJson(w http.ResponseWriter, r *http.Request) {
+	if r.Method != "GET" {
+		w.WriteHeader(401)
+	}
+
+	var d Data
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	keys, err := rd.Keys(ctx, "*raw").Result()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for i := 0; i < len(keys); i++ {
+		val, err := rd.Get(ctx, keys[i]).Result()
+		if err != nil {
+			fmt.Println(err)
+		}
+
+		json.Unmarshal([]byte(val), &d)
+	}
+	json.NewEncoder(w).Encode(d)
+}
+
 func main() {
 
 	go http.HandleFunc("/xlx", xlx)
+	go http.HandleFunc("/org/xlx", xlxJson)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
