@@ -132,7 +132,7 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
-	keys, err := rd.Keys(ctx, "*raw").Result()
+	keys, err := rd.Keys(ctx, "*").Result()
 	if err != nil {
 		fmt.Println(err)
 	}
