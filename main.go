@@ -143,6 +143,11 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
+		spl := strings.Split(keys[i], "-")
+		if spl[0] != "raw" {
+			continue
+		}
+
 		json.Unmarshal([]byte(val), &d)
 	}
 	json.NewEncoder(w).Encode(d)
