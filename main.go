@@ -139,6 +139,8 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 		fmt.Println(err)
 	}
 
+	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
+
 	for i := 0; i < len(keys); i++ {
 		val, err := rd.Get(ctx, keys[i]).Result()
 		if err != nil {
