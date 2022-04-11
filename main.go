@@ -60,6 +60,7 @@ type Station struct {
 	Onmodule      string `json:"On-module"`
 	Viapeer       string `json:"Via-peer"`
 	LastHeardTime string `json:"LastHeardTime"`
+	Epoch         int64  `json:"epoch"`
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
@@ -155,12 +156,15 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 
 		json.Unmarshal([]byte(val), &d)
 
+		time, _ := strconv.ParseInt(spl[1], 10, 64)
+
 		NewStation := Station{
 			d.Callsign,
 			d.Vianode,
 			d.Onmodule,
 			d.Viapeer,
-			d.LastHeardTime}
+			d.LastHeardTime,
+			time}
 
 		s = append(s, NewStation)
 		c++
