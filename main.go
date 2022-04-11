@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"sort"
@@ -88,14 +87,14 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
 
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	for i := 0; i < len(keys); i++ {
 		val, err := rd.Get(ctx, keys[i]).Result()
 
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		// Remove when migration is complete. If the data is raw skip!
@@ -116,7 +115,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	fmt.Println(data)
+	log.Println(data)
 
 	t, _ := template.ParseFiles("template/testpl.html")
 	t.Execute(w, data)
@@ -160,7 +159,7 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 
 	keys, err := rd.Keys(ctx, "*").Result()
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 
 	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
@@ -168,7 +167,7 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 	for i := 0; i < len(keys); i++ {
 		val, err := rd.Get(ctx, keys[i]).Result()
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
 
 		// This won't be required on final release
