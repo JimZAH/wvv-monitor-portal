@@ -149,11 +149,11 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Println(err)
 		}
-	}
 
-	if max < 1 {
-		w.WriteHeader(416)
-		return
+		if max < 1 {
+			w.WriteHeader(416)
+			return
+		}
 	}
 
 	w.WriteHeader(200)
