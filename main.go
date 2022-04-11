@@ -70,7 +70,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 	// The method must be get otherwise dump
 	if r.Method != "GET" {
-		w.WriteHeader(401)
+		w.WriteHeader(405)
 		w.Write([]byte("Sorry, that method is not supported"))
 		return
 	}
@@ -124,16 +124,27 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 }
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
+
 	if r.Method != "GET" {
-		w.WriteHeader(401)
+		w.WriteHeader(405)
 	}
 
-	c := 0
+	var c int64 = 0
 	var d Station
 	var s []Station
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
+
+	max, err := strconv.ParseInt(r.URL.Query().Get("max"), 10, 64)
+	if err != nil {
+		log.Println(err)
+	}
+
+	if max < 1 {
+		w.WriteHeader(416)
+		return
+	}
 
 	keys, err := rd.Keys(ctx, "*").Result()
 	if err != nil {
@@ -167,8 +178,13 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 			time}
 
 		s = append(s, NewStation)
-		c++
 
+		// if limit is reached
+		if c >= max {
+			break
+		}
+
+		c++
 	}
 	json.NewEncoder(w).Encode(s)
 }
