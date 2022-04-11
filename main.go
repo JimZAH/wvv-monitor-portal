@@ -59,7 +59,7 @@ type Station struct {
 	Onmodule      string `json:"On-module"`
 	Viapeer       string `json:"Via-peer"`
 	LastHeardTime string `json:"LastHeardTime"`
-	Epoch         int64  `json:"epoch"`
+	Epoch         int64  `json:"Epoch"`
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
