@@ -128,6 +128,7 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var d Data
+	var s []Station
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
@@ -143,14 +144,25 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 			fmt.Println(err)
 		}
 
+		// This won't be required on final release
 		spl := strings.Split(keys[i], "-")
 		if spl[0] != "raw" {
 			continue
 		}
 
 		json.Unmarshal([]byte(val), &d)
+
+		NewStation := Station{
+			d.Station.S[i].Callsign,
+			d.Station.S[i].Vianode,
+			d.Station.S[i].Onmodule,
+			d.Station.S[i].Viapeer,
+			d.Station.S[i].LastHeardTime}
+
+		s = append(s, NewStation)
+
 	}
-	json.NewEncoder(w).Encode(d)
+	json.NewEncoder(w).Encode(s)
 }
 
 func main() {
