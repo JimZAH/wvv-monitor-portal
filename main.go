@@ -129,22 +129,34 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(405)
 	}
 
-	var c int64 = 0
-	var d Station
-	var s []Station
+	var (
+		c   int64 = 0
+		d   Station
+		max int64
+		s   []Station
+	)
+
+	limit := false
 
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(200)
 
-	max, err := strconv.ParseInt(r.URL.Query().Get("max"), 10, 64)
-	if err != nil {
-		log.Println(err)
+	maxParam := r.URL.Query().Get("max")
+
+	if maxParam != "" {
+		var err error
+		limit = true
+		max, err = strconv.ParseInt(maxParam, 10, 64)
+		if err != nil {
+			log.Println(err)
+		}
 	}
 
 	if max < 1 {
 		w.WriteHeader(416)
 		return
 	}
+
+	w.WriteHeader(200)
 
 	keys, err := rd.Keys(ctx, "*").Result()
 	if err != nil {
@@ -179,12 +191,12 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 
 		s = append(s, NewStation)
 
+		c++
+
 		// if limit is reached
-		if c >= max {
+		if c >= max && limit {
 			break
 		}
-
-		c++
 	}
 	json.NewEncoder(w).Encode(s)
 }
