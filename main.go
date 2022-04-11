@@ -201,10 +201,29 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(s)
 }
 
+func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "GET" {
+		w.WriteHeader(405)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	nodes, err := rd.Get(ctx, "nodes").Result()
+	if err != nil {
+		log.Println(err)
+	}
+
+	json.NewEncoder(w).Encode(nodes)
+
+}
+
 func main() {
 
 	go http.HandleFunc("/xlx", xlx)
-	go http.HandleFunc("/org/xlx", xlxJson)
+	go http.HandleFunc("/xlx-stations", xlxJson)
+	go http.HandleFunc("/xlx-nodes", xlxNodesJson)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
