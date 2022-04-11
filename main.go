@@ -203,6 +203,8 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 
 func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
+	var node []Node
+
 	if r.Method != "GET" {
 		w.WriteHeader(405)
 	}
@@ -215,7 +217,9 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	json.NewEncoder(w).Encode(nodes)
+	json.Unmarshal([]byte(nodes), &node)
+
+	json.NewEncoder(w).Encode(node)
 
 }
 
