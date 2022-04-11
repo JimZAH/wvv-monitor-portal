@@ -128,7 +128,7 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	c := 0
-	var d Data
+	var d Station
 	var s []Station
 
 	w.Header().Set("Content-Type", "application/json")
@@ -154,11 +154,11 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 		json.Unmarshal([]byte(val), &d)
 
 		NewStation := Station{
-			d.Station.S[c].Callsign,
-			d.Station.S[c].Vianode,
-			d.Station.S[c].Onmodule,
-			d.Station.S[c].Viapeer,
-			d.Station.S[c].LastHeardTime}
+			d.Callsign,
+			d.Vianode,
+			d.Onmodule,
+			d.Viapeer,
+			d.LastHeardTime}
 
 		s = append(s, NewStation)
 		c++
