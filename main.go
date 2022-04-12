@@ -14,8 +14,9 @@ import (
 )
 
 var (
-	ctx   = context.Background()
-	limit = 50
+	ctx       = context.Background()
+	limit     = 50
+	allowedIP = "3.8.81.65"
 )
 
 var rd = redis.NewClient(&redis.Options{
@@ -124,6 +125,11 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
 
+	if r.RemoteAddr != allowedIP {
+		w.WriteHeader(401)
+		log.Println("DENIED: ", r.RemoteAddr)
+	}
+
 	if r.Method != "GET" {
 		w.WriteHeader(405)
 	}
@@ -203,6 +209,11 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
 	var node []Node
+
+	if r.RemoteAddr != allowedIP {
+		w.WriteHeader(401)
+		log.Println("DENIED: ", r.RemoteAddr)
+	}
 
 	if r.Method != "GET" {
 		w.WriteHeader(405)
