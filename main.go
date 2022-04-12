@@ -125,7 +125,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
 
-	if r.RemoteAddr != allowedIP {
+	if r.Header.Get("X-FORWARDED-FOR") != allowedIP {
 		w.WriteHeader(401)
 		log.Println("DENIED: ", r.RemoteAddr)
 	}
@@ -210,7 +210,7 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
 	var node []Node
 
-	if r.RemoteAddr != allowedIP {
+	if r.Header.Get("X-FORWARDED-FOR") != allowedIP {
 		w.WriteHeader(401)
 		log.Println("DENIED: ", r.RemoteAddr)
 	}
