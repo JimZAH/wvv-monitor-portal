@@ -237,7 +237,7 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 		// if limit is reached
 		if c >= max && limit {
 			break
-		} else if c >= 50 {
+		} else if c >= 50 && !limit {
 			break
 		}
 	}
