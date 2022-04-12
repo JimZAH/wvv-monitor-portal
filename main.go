@@ -73,6 +73,13 @@ type Station struct {
 
 func limiter(ipaddress string) bool {
 
+	if len(ip) == 0 {
+		log.Println("NEWAPPEND:", ipaddress)
+		nip := Ip{0, ipaddress, time.Now().Unix(), time.Now().Unix()}
+		ip = append(ip, nip)
+
+	}
+
 	for i := 0; i < len(ip); i++ {
 
 		if time.Now().Unix()-ip[i].STime > 60 {
@@ -84,7 +91,7 @@ func limiter(ipaddress string) bool {
 		if ipaddress == ip[i].IPAddress {
 			ip[i].Count++
 			ip[i].LTime = time.Now().Unix()
-			if ip[i].Count > 10 {
+			if ip[i].Count > 10*3 {
 				log.Println("IP Limit: ", ip[i].IPAddress, ip[i].Count)
 				return false
 			}
@@ -159,7 +166,10 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
 
-	limiter(r.Header.Get("Forwarded"))
+	if !limiter(r.Header.Get("Forwarded")) {
+		w.WriteHeader(429)
+		return
+	}
 
 	if r.Method != "GET" {
 		w.WriteHeader(405)
@@ -241,7 +251,10 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
 	var node []Node
 
-	limiter(r.Header.Get("Forwarded"))
+	if !limiter(r.Header.Get("Forwarded")) {
+		w.WriteHeader(429)
+		return
+	}
 
 	if r.Method != "GET" {
 		w.WriteHeader(405)
