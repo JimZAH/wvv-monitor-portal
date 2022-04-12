@@ -9,14 +9,15 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/go-redis/redis/v8"
 )
 
 var (
-	ctx       = context.Background()
-	limit     = 50
-	allowedIP = "3.8.81.65"
+	ctx   = context.Background()
+	limit = 50
+	ip    []Ip
 )
 
 var rd = redis.NewClient(&redis.Options{
@@ -35,6 +36,13 @@ type Data struct {
 	Key     string   `json:"Key"`
 	Node    Nodes    `json:"Node"`
 	Station Stations `json:"Station"`
+}
+
+type Ip struct {
+	Count     int64
+	IPAddress string
+	LTime     int64
+	STime     int64
 }
 
 type Nodes struct {
@@ -61,6 +69,32 @@ type Station struct {
 	Viapeer       string `json:"Via-peer"`
 	LastHeardTime string `json:"LastHeardTime"`
 	Epoch         int64  `json:"Epoch"`
+}
+
+func limiter(ipaddress string) bool {
+
+	for i := 0; i < len(ip); i++ {
+
+		if time.Now().Unix()-ip[i].STime > 60 {
+			log.Println("FLUSH Count: ", ip[i].IPAddress)
+			ip[i].STime = time.Now().Unix()
+			ip[i].Count = 0
+		}
+
+		if ipaddress == ip[i].IPAddress {
+			ip[i].Count++
+			ip[i].LTime = time.Now().Unix()
+			if ip[i].Count > 10 {
+				log.Println("IP Limit: ", ip[i].IPAddress, ip[i].Count)
+				return false
+			}
+
+		} else {
+			nip := Ip{0, ipaddress, time.Now().Unix(), time.Now().Unix()}
+			ip = append(ip, nip)
+		}
+	}
+	return true
 }
 
 func xlx(w http.ResponseWriter, r *http.Request) {
@@ -125,10 +159,7 @@ func xlx(w http.ResponseWriter, r *http.Request) {
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
 
-	if r.Header.Get("X-FORWARDED-FOR") != allowedIP {
-		w.WriteHeader(401)
-		log.Println("DENIED: ", r.RemoteAddr)
-	}
+	limiter(r.Header.Get("Forwarded"))
 
 	if r.Method != "GET" {
 		w.WriteHeader(405)
@@ -210,10 +241,7 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
 	var node []Node
 
-	if r.Header.Get("X-FORWARDED-FOR") != allowedIP {
-		w.WriteHeader(401)
-		log.Println("DENIED: ", r.RemoteAddr)
-	}
+	limiter(r.Header.Get("Forwarded"))
 
 	if r.Method != "GET" {
 		w.WriteHeader(405)
