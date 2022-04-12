@@ -73,13 +73,6 @@ type Station struct {
 
 func limiter(ipaddress string) bool {
 
-	if len(ip) == 0 {
-		log.Println("NEWAPPEND:", ipaddress)
-		nip := Ip{0, ipaddress, time.Now().Unix(), time.Now().Unix()}
-		ip = append(ip, nip)
-
-	}
-
 	for i := 0; i < len(ip); i++ {
 
 		if time.Now().Unix()-ip[i].STime > 60 {
@@ -95,12 +88,14 @@ func limiter(ipaddress string) bool {
 				log.Println("IP Limit: ", ip[i].IPAddress, ip[i].Count)
 				return false
 			}
-
-		} else {
-			nip := Ip{0, ipaddress, time.Now().Unix(), time.Now().Unix()}
-			ip = append(ip, nip)
+			return true
 		}
 	}
+
+	nip := Ip{0, ipaddress, time.Now().Unix(), time.Now().Unix()}
+	ip = append(ip, nip)
+	log.Println("Found:", ipaddress)
+
 	return true
 }
 
