@@ -14,9 +14,8 @@ import (
 )
 
 var (
-	ctx   = context.Background()
-	limit = 50
-	ip    []Ip
+	ctx = context.Background()
+	ip  []Ip
 )
 
 var rd = redis.NewClient(&redis.Options{
