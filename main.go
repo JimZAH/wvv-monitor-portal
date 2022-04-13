@@ -8,7 +8,6 @@ import (
 	"sort"
 	"strconv"
 	"strings"
-	"text/template"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -97,66 +96,6 @@ func limiter(ipaddress string) bool {
 	log.Println("Found:", ipaddress)
 
 	return true
-}
-
-func xlx(w http.ResponseWriter, r *http.Request) {
-
-	var data D
-	data.Reload = true
-
-	// The method must be get otherwise dump
-	if r.Method != "GET" {
-		w.WriteHeader(405)
-		w.Write([]byte("Sorry, that method is not supported"))
-		return
-	}
-
-	span := r.URL.Query().Get("xlx_span")
-
-	if span != "" {
-		data.Reload = false
-	}
-
-	w.WriteHeader(200)
-
-	keys, err := rd.Keys(ctx, "*").Result()
-
-	sort.Sort(sort.Reverse(sort.StringSlice(keys)))
-
-	if err != nil {
-		log.Println(err)
-	}
-
-	for i := 0; i < len(keys); i++ {
-		val, err := rd.Get(ctx, keys[i]).Result()
-
-		if err != nil {
-			log.Println(err)
-		}
-
-		// Remove when migration is complete. If the data is raw skip!
-		raw := strings.Split(keys[i], "-")
-		if raw[0] == "raw" {
-			continue
-		}
-
-		time, _ := strconv.ParseInt(keys[i], 10, 64)
-
-		data.Data = append(data.Data, val)
-
-		data.Time = append(data.Time, time)
-
-		if i == limit-1 && span != "full" {
-			break
-		}
-
-	}
-
-	log.Println(data)
-
-	t, _ := template.ParseFiles("template/testpl.html")
-	t.Execute(w, data)
-
 }
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
@@ -273,7 +212,6 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 
-	go http.HandleFunc("/xlx", xlx)
 	go http.HandleFunc("/xlx-stations", xlxJson)
 	go http.HandleFunc("/xlx-nodes", xlxNodesJson)
 	log.Fatal(http.ListenAndServe(":8080", nil))
