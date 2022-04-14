@@ -58,7 +58,6 @@ type Node struct {
 	Protocol      string `json:"Protocol"`
 	ConnectTime   int64  `json:"ConnectTime"`
 	LastHeardTime int64  `json:"LastHeardTime"`
-	Epoch         int64  `json:"Epoch"`
 }
 
 type Station struct {
@@ -66,8 +65,7 @@ type Station struct {
 	Vianode       string `json:"Via-node"`
 	Onmodule      string `json:"On-module"`
 	Viapeer       string `json:"Via-peer"`
-	LastHeardTime string `json:"LastHeardTime"`
-	Epoch         int64  `json:"Epoch"`
+	LastHeardTime int64  `json:"LastHeardTime"`
 }
 
 func limiter(ipaddress string) bool {
@@ -166,7 +164,6 @@ func xlxJson(w http.ResponseWriter, r *http.Request) {
 			d.Vianode,
 			d.Onmodule,
 			d.Viapeer,
-			d.LastHeardTime,
 			time}
 
 		s = append(s, NewStation)
@@ -205,11 +202,6 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Unmarshal([]byte(nodes), &node)
-
-	// Set the Epoch time based on the lastheard time
-	for i := 0; i < len(node); i++ {
-		node[i].Epoch = node[i].LastHeardTime
-	}
 
 	json.NewEncoder(w).Encode(node)
 
