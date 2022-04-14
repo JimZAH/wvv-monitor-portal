@@ -203,7 +203,7 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 
 	json.Unmarshal([]byte(nodes), &node)
 
-	sort.Slice(node, func(i, j int) bool { return node[i].ConnectTime < node[j].ConnectTime })
+	sort.Slice(node, func(i, j int) bool { return node[i].ConnectTime > node[j].ConnectTime })
 
 	json.NewEncoder(w).Encode(node)
 
