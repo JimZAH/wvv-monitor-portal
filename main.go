@@ -57,7 +57,8 @@ type Node struct {
 	LinkedModule  string `json:"LinkedModule"`
 	Protocol      string `json:"Protocol"`
 	ConnectTime   string `json:"ConnectTime"`
-	LastHeardTime string `json:"LastHeardTime"`
+	LastHeardTime int64  `json:"LastHeardTime"`
+	Epoch         int64  `json:"Epoch"`
 }
 
 type Station struct {
@@ -204,6 +205,11 @@ func xlxNodesJson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.Unmarshal([]byte(nodes), &node)
+
+	// Set the Epoch time based on the lastheard time
+	for i := 0; i < len(node); i++ {
+		node[i].Epoch = node[i].LastHeardTime
+	}
 
 	json.NewEncoder(w).Encode(node)
 
