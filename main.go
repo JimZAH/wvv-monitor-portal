@@ -56,7 +56,7 @@ type Node struct {
 	IP            string `json:"IP"`
 	LinkedModule  string `json:"LinkedModule"`
 	Protocol      string `json:"Protocol"`
-	ConnectTime   string `json:"ConnectTime"`
+	ConnectTime   int64  `json:"ConnectTime"`
 	LastHeardTime int64  `json:"LastHeardTime"`
 	Epoch         int64  `json:"Epoch"`
 }
