@@ -115,18 +115,32 @@ func keepAlive(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	raw_payload_size, err := rd.Get(ctx, "payload_size").Result()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
 	ut, err := strconv.ParseInt(val, 10, 64)
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(500)
 		return
 	}
+	payload_size, err := strconv.ParseInt(raw_payload_size, 10, 64)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
 	w.WriteHeader(200)
 
 	now := time.Now().Unix()
 	diff := now - ut
 
-	res := fmt.Sprintf("Report was last received: %d seconds ago.", diff)
+	res := fmt.Sprintf("Report was last received: %d seconds ago.\nLast payload size: %d bytes", diff, payload_size)
 
 	if diff > 3600 {
 		res = "It's been a while since we had a report from the XLX service!"
