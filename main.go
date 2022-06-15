@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"sort"
@@ -94,6 +95,45 @@ func limiter(ipaddress string) bool {
 	log.Println("Found:", ipaddress)
 
 	return true
+}
+
+func keepAlive(w http.ResponseWriter, r *http.Request) {
+
+	if !limiter(r.Header.Get("Forwarded")) {
+		w.WriteHeader(429)
+		return
+	}
+
+	if r.Method != "GET" {
+		w.WriteHeader(405)
+	}
+
+	val, err := rd.Get(ctx, "keepalive").Result()
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+
+	ut, err := strconv.ParseInt(val, 10, 64)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(500)
+		return
+	}
+	w.WriteHeader(200)
+
+	now := time.Now().Unix()
+	diff := now - ut
+
+	res := fmt.Sprintf("Report was last received: %d seconds ago.", diff)
+
+	if diff > 3600 {
+		res = "It's been a while since we had a report from the XLX service!"
+	}
+
+	w.Write([]byte(res))
+
 }
 
 func xlxJson(w http.ResponseWriter, r *http.Request) {
@@ -213,6 +253,7 @@ func main() {
 
 	go http.HandleFunc("/xlx-stations", xlxJson)
 	go http.HandleFunc("/xlx-nodes", xlxNodesJson)
+	go http.HandleFunc("/ka", keepAlive)
 	log.Fatal(http.ListenAndServe(":8080", nil))
 
 }
